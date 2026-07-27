@@ -71,7 +71,7 @@ export default async function PageAdmin() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {reservations.map((r) => (
+              {reservations.map((r: any) => (
                 <tr key={r.id} className="hover:bg-muted/50">
                   <td className="px-6 py-4">
                     <div className="font-medium text-foreground">{r.nom}</div>
