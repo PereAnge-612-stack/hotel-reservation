@@ -1,14 +1,13 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function PageConnexion() {
+function ConnexionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inscrit = searchParams.get("inscrit");
@@ -42,6 +41,59 @@ export default function PageConnexion() {
   }
 
   return (
+    <div className="bg-card/95 backdrop-blur border border-border rounded-xl p-8 w-full max-w-md">
+      <div className="text-center mb-6">
+        <svg viewBox="0 0 64 64" className="w-10 h-10 mx-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="30" stroke="#a78bfa" strokeWidth="2"/>
+          <path
+            d="M14 40c6-2 10-6 12-12 1-4 0-9-3-11 3-1 6 0 8 3 1-4 4-6 7-6-1 3 0 6 2 8 4 4 5 10 3 15-3 7-10 11-18 11-4 0-8-1-11-3-1-1-1-3 0-5z"
+            fill="#a78bfa"
+            opacity="0.9"
+          />
+          <circle cx="38" cy="18" r="1.5" fill="#0a0a14"/>
+        </svg>
+        <h1 className="text-2xl font-bold text-foreground mt-2">Connexion</h1>
+        <p className="text-muted-foreground text-sm mt-1">Bon retour parmi nous !</p>
+      </div>
+
+      {inscrit && (
+        <div className="bg-green-500/10 text-green-500 text-sm rounded-lg px-4 py-3 mb-4">
+          Compte créé avec succès ! Connectez-vous.
+        </div>
+      )}
+
+      {erreur && (
+        <div className="bg-destructive/10 text-destructive text-sm rounded-lg px-4 py-3 mb-4">
+          {erreur}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" placeholder="adama@email.com" onChange={handleChange} required />
+        </div>
+        <div>
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input id="password" name="password" type="password" placeholder="••••••••" onChange={handleChange} required />
+        </div>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Connexion..." : "Se connecter"}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-muted-foreground mt-6">
+        Pas encore de compte ?{" "}
+        <Link href="/inscription" className="text-foreground font-medium hover:underline">
+          S'inscrire
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+export default function PageConnexion() {
+  return (
     <main
       className="min-h-screen flex items-center justify-center px-4 relative"
       style={{
@@ -55,54 +107,9 @@ export default function PageConnexion() {
         <p className="text-white/70 text-sm md:text-base">Votre séjour d'exception commence ici</p>
       </div>
 
-      <div className="bg-card/95 backdrop-blur border border-border rounded-xl p-8 w-full max-w-md">
-        <div className="text-center mb-6">
-          <svg viewBox="0 0 64 64" className="w-10 h-10" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="32" cy="32" r="30" stroke="#a78bfa" strokeWidth="2"/>
-  <path
-    d="M14 40c6-2 10-6 12-12 1-4 0-9-3-11 3-1 6 0 8 3 1-4 4-6 7-6-1 3 0 6 2 8 4 4 5 10 3 15-3 7-10 11-18 11-4 0-8-1-11-3-1-1-1-3 0-5z"
-    fill="#a78bfa"
-    opacity="0.9"
-  />
-  <circle cx="38" cy="18" r="1.5" fill="#0a0a14"/>
-</svg>
-          <h1 className="text-2xl font-bold text-foreground">Connexion</h1>
-          <p className="text-muted-foreground text-sm mt-1">Bon retour parmi nous !</p>
-        </div>
-
-        {inscrit && (
-          <div className="bg-green-500/10 text-green-500 text-sm rounded-lg px-4 py-3 mb-4">
-            Compte créé avec succès ! Connectez-vous.
-          </div>
-        )}
-
-        {erreur && (
-          <div className="bg-destructive/10 text-destructive text-sm rounded-lg px-4 py-3 mb-4">
-            {erreur}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="adama@email.com" onChange={handleChange} required />
-          </div>
-          <div>
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input id="password" name="password" type="password" placeholder="••••••••" onChange={handleChange} required />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Connexion..." : "Se connecter"}
-          </Button>
-        </form>
-
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Pas encore de compte ?{" "}
-          <Link href="/inscription" className="text-foreground font-medium hover:underline">
-            S'inscrire
-          </Link>
-        </p>
-      </div>
+      <Suspense fallback={<div className="text-white text-center">Chargement...</div>}>
+        <ConnexionForm />
+      </Suspense>
     </main>
   );
 }
